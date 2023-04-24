@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 
 from pathlib import Path
-import os
 
 from datetime import timedelta
 
@@ -47,10 +47,12 @@ INSTALLED_APPS = [
     'apps.common',
     'apps.bitches',
 
-    'rest_framework',
-    'django_editorjs',
-    'drf_yasg',
     'rest_framework.authtoken',
+    'rest_framework',
+    'drf_yasg',
+
+    'django_editorjs',
+
     'djoser',
 ]
 
