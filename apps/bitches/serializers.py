@@ -25,7 +25,7 @@ class BitchSerializer(serializers.ModelSerializer):
             'description',
             'price',
             'author',
-            'category'
+            'category',
         )
 
 
