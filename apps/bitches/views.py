@@ -2,16 +2,11 @@ from django.shortcuts import render
 
 from rest_framework import generics, viewsets
 
+from apps.bitches.models import Bitch, Category, Image
 from apps.bitches.serializers import (
     BitchSerializer,
     CategorySerializer,
     Imageserializer
-)
-
-from apps.bitches.models import (
-    Bitch,
-    Category,
-    Image,
 )
 
 

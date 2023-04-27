@@ -1,6 +1,7 @@
 from django.db import models
 from django.core import validators
 from django.contrib.auth.models import AbstractUser
+
 from apps.common.constants import UserType
 from apps.common.models import AbstractBaseModel
 

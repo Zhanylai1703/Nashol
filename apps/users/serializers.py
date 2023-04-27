@@ -1,12 +1,8 @@
-import factory
+from django.conf import settings
+from django.db.models import Q
 
 from djoser.serializers import UserCreateSerializer
 
-from django.conf import settings
-
-from rest_framework import generics, status, viewsets, permissions
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
 
@@ -47,23 +43,16 @@ class RegisterSerializer(UserCreateSerializer):
             'username', 
             'password', 
             )
-
-    # def validate(self, attrs):
-    #     password = attrs.get('password')
-    #     password2 = attrs.get('password2')
-    #     if password != password2:
-    #         raise serializers.ValidationError("Passwords do not match.")
-    #     return attrs
     
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email_or_username = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
-        email = attrs.get('email')
+        email_or_username = attrs.get('email_or_username', None)
         password = attrs.get('password')
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(Q(email=email_or_username)|Q(username=email_or_username)).first()
         if user is None:
             raise serializers.ValidationError("User does not exist.")
         if not user.check_password(password):
@@ -76,3 +65,10 @@ class LoginSerializer(serializers.Serializer):
             'access': str(refresh.access_token),
         }
         return data
+    
+
+class LogoutSerializer(serializers.Serializer):
+    message = serializers.CharField(default='Вы успешно вышли')
+
+    class Meta:
+        fields = ('message',)

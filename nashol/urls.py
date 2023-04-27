@@ -12,7 +12,8 @@ from apps.bitches import views
 from apps.users.views import (
     UserViewSet,
     RegisterView,
-    LoginView
+    LoginView,
+    LogoutView,
     )
 
 
@@ -38,6 +39,7 @@ router.register(r'user/', UserViewSet,basename="users")
 api_v1 = [
     path('reg/', RegisterView.as_view()),
     path('login/', LoginView.as_view()),
+    path('logout/', LogoutView.as_view())
 ]
 
 

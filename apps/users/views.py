@@ -1,12 +1,10 @@
 import jwt
-from django.shortcuts import render
+
 from django.conf import settings
 
-from rest_framework import generics, viewsets
-from rest_framework import generics, status, viewsets, permissions
+from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 
 from apps.users.models import User
 
@@ -14,7 +12,7 @@ from apps.users.serializers import (
     Userserializer, 
     RegisterSerializer,
     LoginSerializer,
-    UserTokenSerializer
+    LogoutSerializer,
     )
 
 
@@ -34,14 +32,21 @@ class RegisterView(generics.CreateAPIView):
         user = serializer.save()
 
         user_payload = {
-            'user_id': user.id,
+            'user_id': str(user.id), 
             'username': user.username
         }
-        access_token = jwt.encode(user_payload, settings.SECRET_KEY, algorithm="HS256")
-        refresh_token = jwt.encode(user_payload, settings.SECRET_KEY, algorithm="HS256")
+        
+        access_token = jwt.encode(
+            user_payload, settings.SECRET_KEY, 
+            algorithm="HS256"
+        )
+        refresh_token = jwt.encode(
+            user_payload, settings.SECRET_KEY, 
+            algorithm="HS256"
+        )
 
         response_data = {
-            'user_id': user.id,
+            'user_id': str(user.id),
             'access_token': access_token,
             'refresh_token': refresh_token
         }
@@ -57,4 +62,19 @@ class LoginView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(
+            serializer.validated_data, 
+            status=status.HTTP_200_OK
+        )
+    
+
+class LogoutView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+
+    def post(self, request, *args, **kwargs):
+        # Удаление токена доступа пользователя из базы данных или сессии
+        request.user.auth_token.delete()
+        return Response(
+            {'message': 'Вы успешно вышли'}, 
+            status=status.HTTP_200_OK
+        )
